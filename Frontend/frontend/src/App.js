@@ -11,7 +11,7 @@ function App() {
         </p>
         <a
           className="App-link"
-          href="https://netflix.com"
+          href="https://google.com"
           target="_blank"
           rel="noopener noreferrer"
         >
