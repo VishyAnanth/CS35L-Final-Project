@@ -170,10 +170,10 @@ class Sightings extends Component {
   render() {
     return (
       <main className="container">
-        <h1 className="text-white text-uppercase text-center my-4">Powell Cat Tracker</h1>
+        <h1 className="text-white text-uppercase text-center my-4">Powell Cat Sighting Reports</h1>
         {/* <img  src={powell_cat}   className="center" alt="powell"/> */}
         <div className="row">
-          <div className="col-md-10 col-sm-14 mx-auto p-0">
+          <div className="col-md-12 col-sm-16 mx-auto p-0">
             <div className="card p-3">
               <div className="mb-4">
                 <button
