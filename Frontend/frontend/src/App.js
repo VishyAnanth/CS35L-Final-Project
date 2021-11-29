@@ -35,6 +35,7 @@ class App extends Component {
     this.state = {
       viewCompleted: false,
       todoList: cat_sightings,
+      currImage: null
     };
   }
 
