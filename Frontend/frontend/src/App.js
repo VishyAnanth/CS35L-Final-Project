@@ -19,6 +19,7 @@ class App extends Component {
                 <Route path='/Scoreboard.js' element={<Scoreboard/>} />
               </Routes>
             </main>
+
           </React.Fragment>
         </BrowserRouter>
       );

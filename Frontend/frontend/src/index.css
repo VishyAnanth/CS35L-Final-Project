@@ -37,14 +37,24 @@ date {
   font-size: 14px;
   color: gray;
 }
+
+updoots {
+  font-size: 14px;
+  color: orangered;
+}
+
+downdoots {
+  font-size: 14px;
+  color: rgb(82, 36, 189);
+}
 .description {
   font-size: 14px;
 }
 
 
 .photo {
-  height: 60px;
-  width: 80px;
+  height: 80px;
+  width: 120px;
 }
 
 .center {
@@ -60,3 +70,12 @@ date {
   border-radius: 0;
   color: #fff;
   }
+
+  #content { 
+    width: 300px; height: 300px; border: 1px solid black; 
+    margin-left: auto;
+    margin-right: auto;
+    width: 40%;
+    background-image: linear-gradient(to right, rgba(0, 225, 255, 0.514), rgb(173, 223, 220));}
+  .topright { position: absolute; top: 5px; right: 5px; text-align: right; }
+  .bottomright { position: absolute; bottom: 5px; right: 5px; text-align: right; }

@@ -2,38 +2,42 @@ import React, { Component } from "react";
 import powell_cat from './powell_cat.jpg'; 
 import Modal from "./Modal.js";
 
+
+
 const cat_sightings = [
   {
     id: 1,
     title: "Cat sighted under the tree",
-    description: "dummy",
+    description: "Eye of the tiger eyeing his prey that is a little earthworm",
     image: powell_cat,
     date: "2021-12-1 06:00",
-    completed: true,
+    upvotes: 0,
   },
   {
     id: 2,
-    title: "Cat laying on steps to Ackerman Center",
-    description: "substitute",
+    title: "Cat sunbathing in the soft grass",
+    description: "I'm running out of ideas pls help",
     image: powell_cat,
-    completed: false,
     date: "2021-12-1 06:00",
+    upvotes: 0,
+
   },
   {
     id: 3,
     title: "Cat laying on steps to Ackerman Center",
-    description: "lol",
-    completed: true,
-    image: powell_cat,
+    description: "Didn't submit a photo",
     date: "2021-12-1 06:00",
+    upvotes: 0,
+
   },
   {
     id: 4,
-    title: "Cat laying on steps to Ackerman Center",
+    title: "Cat bit me uwu",
     description: "Cat laying on steps to Ackerman Center",
-    completed: false,
     image: powell_cat,
     date: "2021-12-1 06:00",
+    upvotes: 0,
+
   },
 ];
 
@@ -41,13 +45,14 @@ class Sightings extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      viewCompleted: false,
       todoList: cat_sightings,
       modal: false,
       activeItem: {
         title: "",
         description: "",
-        completed: false,
+        date: this.handleDate(),
+        upvote: 0,
+
       },
     };
   }
@@ -62,9 +67,6 @@ class Sightings extends Component {
     alert("save" + JSON.stringify(item));
   };
 
-  handleDelete = (item) => {
-    alert("delete" + JSON.stringify(item));
-  };
 
   handleDate = () => {
     let date_ob = new Date();
@@ -90,17 +92,30 @@ class Sightings extends Component {
     return (year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds);
 
   }
+
+  
   createItem = () => {
-    const item = { title: "", description: "", completed: false, date: this.handleDate() };
+    const item = { title: "", description: "", upvotes: 0, image: "", date: this.handleDate() };
 
     this.setState({ activeItem: item, modal: !this.state.modal });
   };
 
-  editItem = (item) => {
-    this.setState({ activeItem: item, modal: !this.state.modal, date: this.handleDate() });
+  upvote = (item) => {
+    item.upvotes = item.upvotes + 1 ;
+    this.forceUpdate();
+    alert("upvoted" + JSON.stringify(item));
+    alert("upvotes = " + JSON.stringify(item.upvotes));
+  };
+
+  downvote = (item) => {
+    item.upvotes = item.upvotes - 1 ;
+    this.forceUpdate();
+    alert("downvoted" + JSON.stringify(item));
+    alert("downvotes = " + JSON.stringify(item.upvotes));
   };
 
 
+/*
   displayCompleted = (status) => {
     if (status) {
       return this.setState({ viewCompleted: true });
@@ -127,36 +142,44 @@ class Sightings extends Component {
       </div>
     );
   };
+*/
+
 
   renderItems = () => {
-    const { viewCompleted } = this.state;
+    /*
+      const { viewCompleted } = this.state;
     const newItems = this.state.todoList.filter(
       (item) => item.completed === viewCompleted
-    );
+    );*/
+    const newItems = this.state.todoList;
 
     return newItems.map((item) => (
       <li
         key={item.id}
         className="list-group-item d-flex justify-content-between align-items-center"
       >
-        <span
-          
-        >
-          <p class="title"> <b> {item.title} </b> <date> {item.date} </date> </p>
-          <p class="description"><img src={item.image} class="photo" alt="cat.jpg"></img> &emsp;{item.description} </p>
+        <span>
+          <p class="title"> <b> {item.title} </b> &emsp;
+          <date> {item.date} </date> &emsp;
+          <updoots> upvotes: {item.upvotes} </updoots>
+          </p>
+          <p class="description">
+            <img src={item.image} class="photo" alt="&emsp;no_cat.jpg&emsp;&emsp;&emsp;"></img> 
+            &emsp;{item.description} 
+            </p>
           
           </span>
           
         <span >
           <button
             className="btn btn-success mr-2"
-            onClick={() => this.editItem(item)}
+            onClick={() => this.upvote(item)}
           >
             upvote
           </button>
           <button
             className="btn btn-danger"
-            onClick={() => this.handleDelete(item)}
+            onClick={() => this.downvote(item)}
           >
             downvote
           </button>
@@ -183,7 +206,6 @@ class Sightings extends Component {
                   Add a sighting
                 </button>
               </div>
-              {this.renderTabList()}
               <ul className="list-group list-group-flush border-top-0">
                 {this.renderItems()}
               </ul>

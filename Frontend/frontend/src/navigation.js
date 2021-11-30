@@ -5,7 +5,7 @@ import './navigation.css';
 const Navigation = props => (
     <header className="main-page">
     <div className="main_menu">
-      <h1 title="Main Menu"> <NavLink to="/App.js">Powell Cat Tracker</NavLink></h1>
+       <NavLink to="/App.js"><h1 title="Main Menu">Powell Cat Tracker</h1></NavLink>
     </div>
     <nav className="main-page__items">
       <ul>
