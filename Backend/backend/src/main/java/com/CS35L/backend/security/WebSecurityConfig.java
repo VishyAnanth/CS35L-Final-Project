@@ -1,6 +1,7 @@
 package com.CS35L.backend.security;
 
 import com.CS35L.backend.security.jwt.AuthEntryPointJwt;
+import com.CS35L.backend.security.jwt.JwtTokenAuthenticationFilter;
 import com.CS35L.backend.security.securityServices.UserDetailsBasicService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
 @Configuration
@@ -26,6 +28,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     
     @Autowired
 	private AuthEntryPointJwt unauthorizedHandler;
+
+
+    @Autowired
+    private JwtTokenAuthenticationFilter jwtTokenAuthenticationFilter;
 
     @Override
 	public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
@@ -48,6 +54,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.csrf().disable()
 			.exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+			.addFilterAfter(jwtTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 			.authorizeRequests().antMatchers("/**").permitAll()
 			.anyRequest().authenticated();
 	}

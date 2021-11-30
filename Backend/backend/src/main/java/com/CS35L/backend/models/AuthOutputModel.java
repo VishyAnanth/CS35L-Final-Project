@@ -11,4 +11,5 @@ import lombok.experimental.Accessors;
 public class AuthOutputModel {
     private Status status;
     private UserDTO user;
+    private String token;
 }
