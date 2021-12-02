@@ -1,0 +1,59 @@
+.loginContainer {
+    position: absolute;
+    left: 30%;
+    width: 40%;
+    top: 20%;
+    height: 60%;
+    display: flex;
+    background-color: lightgray;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    border-radius: 20px;
+}
+
+.logoLogin {
+    font-family: 'instaFont';
+    color: black;
+    font-size: 3vw;
+    margin-top: 7%;
+}
+
+.inputFields {
+    border: solid 1px transparent;
+    margin-top: 5%;
+    height: 10%;
+    width: 70%;
+    border-radius: 10px;
+    padding-left: 2%;
+    outline: none;
+    font-size: 15px;
+}
+
+.loginButton {
+    border: solid 1px rgb(40, 139, 231);
+    margin-top: 5%;
+    height: 10%;
+    width: 70%;
+    border-radius: 10px;
+    padding-left: 2%;
+    outline: none;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(40, 139, 231);
+    color: white;
+    transition: 0.4s;
+    cursor: pointer;
+}
+
+.loginButton:hover {
+    opacity: 0.6;
+}
+
+.signUpButton {
+    color: white;
+    border: solid 1px darkgray;
+    background-color: darkgray;
+}

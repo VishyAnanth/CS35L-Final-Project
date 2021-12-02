@@ -1,0 +1,31 @@
+.scoreboardRowContainer {
+    height: 7vh;
+    width: 90%;
+    margin-left: 5%;
+    margin-top: 0.5vw;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    cursor: pointer;
+    transition: 0.4s;
+}
+
+.scoreboardRowContainer:hover {
+    background-color: lightgray;
+}
+
+.scoreboardUsername {
+    margin-left: 0.5vw;
+    font-size: 15px;
+    color: black;
+}
+
+.userlogo {
+    margin-left: 1vw;
+}
+
+.score {
+    font-size: 15px;
+    margin-left: 3vw;
+}
