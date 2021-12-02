@@ -1,0 +1,117 @@
+.newPostPopup {
+    position: fixed;
+    background: #00000050;
+    width: 100%;
+    height: 200vh;
+    top: 0;
+    left: 0;
+}
+
+.box {
+    position: absolute;
+    top: 10vw;
+    left: 25%;
+    width: 50%;
+    height: 40%;
+    background-color: white;
+    border: solid 1px black;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+.newSighting {
+    margin-top: 1vw;
+    margin-left: 2vw;
+    width: 47vw;
+    height: 2vw;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    font-size: 20px;
+}
+
+.closeButton {
+    margin-left: 36vw;
+    cursor: pointer;
+}
+
+.titleInputField {
+    margin-top: 1vw;
+    margin-left: 2vw;
+    border: solid 1px black;
+    outline: none;
+    border-radius: 10px;
+    height: 2vw;
+    font-size: 15px;
+    padding-left: 1vw;
+    width: 40vw;
+}
+
+.captionInputField {
+    margin-top: 1vw;
+    margin-left: 2vw;
+    border: solid 1px black;
+    outline: none;
+    border-radius: 10px;
+    height: 2vw;
+    font-size: 15px;
+    padding-left: 1vw;
+    width: 40vw;
+}
+
+.imageLabelContainer {
+    font-size: 15px;
+}
+
+.fileInput {
+    margin-left: 1vw;
+    margin-top: 0.5vw;
+}
+
+.selectClass {
+    margin-left: 1vw;
+    font-size: 20px;
+    margin-top: 0.5vw;
+}
+
+.postButton {
+    border: solid 1px rgb(40, 139, 231);
+    align-self: center;
+    margin-top: 3%;
+    height: 10%;
+    width: 70%;
+    border-radius: 10px;
+    padding-left: 2%;
+    outline: none;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(40, 139, 231);
+    color: white;
+    transition: 0.4s;
+    cursor: pointer;
+}
+
+.postButton:hover {
+    opacity: 0.6;
+}
+
+.googleMapContainer2 {
+    width: 45vw;
+    height: 19vw;
+    margin-top: 1vw;
+    justify-self: center;
+    align-self: center;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.markerElement {
+    color: red;
+
+}
