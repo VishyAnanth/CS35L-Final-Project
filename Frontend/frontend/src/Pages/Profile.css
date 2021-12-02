@@ -1,0 +1,33 @@
+.feed2 {
+    position: absolute;
+    top: 10vw;
+    left: 25%;
+    width: 50%;
+    height: calc(99% - 10vw);
+    overflow: scroll;
+}
+
+.feed2::-webkit-scrollbar { 
+    display: none;  /* Safari and Chrome */
+}
+
+.username {
+    position: absolute;
+    left: 43%;
+    top: 6%;
+    font-size: 40px;
+}
+
+.profileImageProfilePage {
+    position: absolute;
+    left: 35%;
+    top: 5%;
+}
+
+.profileScore {
+    font-size: 20px;
+    color: gray;
+    position: absolute;
+    left: 43.5%;
+    top: 14%;
+}
