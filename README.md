@@ -75,7 +75,7 @@ Troubleshooting:
 ```
 brew service start postgres
 ```
-- If the frontend returns errors upon starting, attempt to install node modules that are missing by running
+- If the frontend returns errors upon starting, attempt to install node modules that are missing by running (i.e. Google Maps)
 ```
 npm install --save <NODE_MODULE>
 ```
