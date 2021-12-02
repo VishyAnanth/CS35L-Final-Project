@@ -1,0 +1,106 @@
+@font-face {
+    font-family: 'instaFont';
+    src: local('instaFont'), url(../fonts/instagram-new/Demo_Fonts/Fontspring-DEMO-blue_vinyl_regular_ps_ot.otf) format('truetype');
+  }
+
+.navbar {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 5vw;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1%;
+    overflow: visible;
+}
+
+.logo {
+    font-family: 'instaFont';
+    color: black;
+    font-size: 2vw;
+    margin-left: 10vw;
+    cursor: pointer;
+}
+
+.searchBar {
+    outline: none;
+    height: 1.5vw;
+    width: 30vw;
+    border: solid 1px darkgray;
+    margin-left: 13vw;
+    border-radius: 10px;
+    padding-left: 1vw;
+}
+
+.displayNone {
+    visibility: hidden;
+}
+
+.searchBarIcon {
+    margin-left: -3vw;
+}
+
+.profileImageContainer {
+    margin-left: 27%;
+    width: 4vw;
+    height: 4vw;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap:10%;
+}
+
+.downCaret {
+    cursor: pointer;
+}
+
+.profileButton {
+    cursor: pointer;
+}
+
+.resultsContainer {
+    position: absolute;
+    height: 30vw;
+    width: 31.5%;
+    background-color: white;
+    border: solid 1px black;
+    border-radius: 10px;
+    left: 35%;
+    top: 4vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    display: none;
+    gap: 1vw;
+}
+
+.resultsLabel {
+    align-self: flex-start;
+    margin-top: 1vw;
+    margin-left: 1vw;
+}
+
+.signOutContainer {
+    position: absolute;
+    height: 3vw;
+    width: 5vw;
+    background-color: white;
+    border: solid 1px black;
+    border-radius: 5px;
+    left: 92%;
+    top: 4vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    display: none;
+}
+
+.displayResults {
+    display: flex;
+}
