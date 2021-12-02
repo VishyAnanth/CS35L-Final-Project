@@ -77,7 +77,10 @@ brew service start postgres
 ```
 - If the frontend returns errors upon starting, attempt to install node modules that are missing by running (i.e. Google Maps)
 ```
-npm install --save <NODE_MODULE>
+npm install react-router-dom --save
+npm install react-icons --save     
+npm install --save google-map-react
+
 ```
 - If the backend returns errors on running, run
 ```
