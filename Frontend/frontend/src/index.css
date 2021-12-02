@@ -1,11 +1,5 @@
 body {
   margin: 0;
-  background-image: url("./powell_cat.jpg");
-  background-position: center; 
-  background-attachment: fixed;
-  background-repeat: no-repeat; 
-  background-size: cover; 
-
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
@@ -13,69 +7,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.title {
-  font-size: 16px;
-  color: black;
-}
-
-page_title {
-  font-size: xx-large;
-  display:inline-block;
-  position:relative;
-  color: white;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-  'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-  sans-serif;
-
-}
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-
-date {
-  font-size: 14px;
-  color: gray;
-}
-
-updoots {
-  font-size: 14px;
-  color: orangered;
-}
-
-downdoots {
-  font-size: 14px;
-  color: rgb(82, 36, 189);
-}
-.description {
-  font-size: 14px;
-}
-
-
-.photo {
-  height: 80px;
-  width: 120px;
-}
-
-.center {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  width: 45%;
-}
-
-.list-group-mine .list-group-item {
-  background-color: transparent;
-  border-top: 1px solid #ddd;
-  border-radius: 0;
-  color: #fff;
-  }
-
-  #content { 
-    width: 300px; height: 300px; border: 1px solid black; 
-    margin-left: auto;
-    margin-right: auto;
-    width: 40%;
-    background-image: linear-gradient(to right, rgba(0, 225, 255, 0.514), rgb(173, 223, 220));}
-  .topright { position: absolute; top: 5px; right: 5px; text-align: right; }
-  .bottomright { position: absolute; bottom: 5px; right: 5px; text-align: right; }

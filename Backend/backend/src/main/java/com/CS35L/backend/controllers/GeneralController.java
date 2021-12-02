@@ -16,10 +16,13 @@ import com.CS35L.backend.models.PostRowMapper;
 import com.CS35L.backend.models.Status;
 import com.CS35L.backend.models.UserDTO;
 import com.CS35L.backend.models.UserRowMapper;
+import com.CS35L.backend.models.VoteDTO;
+import com.CS35L.backend.models.VoteRowMapper;
 import com.CS35L.backend.security.jwt.JwtUtils;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -29,11 +32,13 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 
 @RestController
+@RequestMapping("/")
 public class GeneralController {
     @Autowired
     AuthenticationManager authenticationManager;
@@ -61,29 +66,38 @@ public class GeneralController {
         AuthOutputModel response = new AuthOutputModel()
         .setStatus(Status.SUCCESS)
         .setUser(authInputModel.getUser());
+        try {
+            Boolean usernameExists = Optional.of(this.jdbcTemplate.queryForObject("SELECT EXISTS(SELECT 1 FROM users WHERE username = ?)", Boolean.class, authInputModel.getUser().getUsername())).orElse(false);
+            Boolean emailExists = Optional.of(this.jdbcTemplate.queryForObject("SELECT EXISTS(SELECT 1 FROM users WHERE email = ?)", Boolean.class, authInputModel.getUser().getEmail())).orElse(false);
 
-        Boolean usernameExists = Optional.of(this.jdbcTemplate.queryForObject("SELECT EXISTS(SELECT 1 FROM users WHERE username = ?)", Boolean.class, authInputModel.getUser().getUsername())).orElse(false);
-        Boolean emailExists = Optional.of(this.jdbcTemplate.queryForObject("SELECT EXISTS(SELECT 1 FROM users WHERE email = ?)", Boolean.class, authInputModel.getUser().getEmail())).orElse(false);
-
-        if(!usernameExists && !emailExists) {
-            UUID uuid = UUID.randomUUID();
-            this.jdbcTemplate.update("INSERT INTO users (id, username, password, email, firstName, lastName, enabled, nonExpired, nonLocked, credentialsNonExpired, score) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
-            uuid,
-            authInputModel.getUser().getUsername(),
-            passwordEncoder().encode(authInputModel.getUser().getPassword()),
-            authInputModel.getUser().getEmail(),
-            authInputModel.getUser().getFirstName(),
-            authInputModel.getUser().getLastName(),
-            true,
-            true,
-            true,
-            true,
-            0);
-            return response;
-        } else {
+            if(!usernameExists && !emailExists) {
+                UUID uuid = UUID.randomUUID();
+                this.jdbcTemplate.update("INSERT INTO users (id, username, password, email, firstName, lastName, enabled, nonExpired, nonLocked, credentialsNonExpired, score) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+                uuid,
+                authInputModel.getUser().getUsername(),
+                passwordEncoder().encode(authInputModel.getUser().getPassword()),
+                authInputModel.getUser().getEmail(),
+                authInputModel.getUser().getFirstName(),
+                authInputModel.getUser().getLastName(),
+                true,
+                true,
+                true,
+                true,
+                0);
+            } else {
+                response.setStatus(Status.ERROR);
+            }
+        } catch(EmptyResultDataAccessException e) {
             response.setStatus(Status.ERROR);
         }
-
+        if(response.getStatus() == Status.SUCCESS) {
+            Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(authInputModel.getUser().getUsername(), authInputModel.getUser().getPassword()));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtUtils.generateJwtToken(authentication);
+            response.setUser(authInputModel.getUser());
+            response.setToken(jwt);
+        }
         return response;
     }
 
@@ -117,19 +131,28 @@ public class GeneralController {
 
     @PostMapping("/searchUserByUsername")
     public List<UserDTO> searchUser(@RequestBody AuthInputModel authInputModel) {
-        List<UserDTO> users = Optional.of(jdbcTemplate.query("SELECT * FROM users WHERE username LIKE ?", new UserRowMapper(), "%"+authInputModel.getUser().getUsername()+"%")).orElse(null);
-        return users;
+        try {
+            List<UserDTO> users = Optional.of(jdbcTemplate.query("SELECT * FROM users WHERE username LIKE ? LIMIT 3", new UserRowMapper(), "%"+authInputModel.getUser().getUsername()+"%")).orElse(null);
+            for(UserDTO user : users) {
+                user.setPassword("");
+            }
+            return users;
+        } catch(EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
     @PostMapping("/getUser")
     public AuthOutputModel getUser(@RequestBody AuthInputModel authInputModel) {
         AuthOutputModel res = new AuthOutputModel()
         .setStatus(Status.SUCCESS);
-        UserDTO user = Optional.of(jdbcTemplate.queryForObject("SELECT * FROM users WHERE username = ?", new UserRowMapper(), authInputModel.getUser().getUsername())).orElse(null);
-        if(user == null) {
+        try {
+            UserDTO user = Optional.of(jdbcTemplate.queryForObject("SELECT * FROM users WHERE username = ?", new UserRowMapper(), authInputModel.getUser().getUsername())).orElse(null);
+            res.setUser(user);
+            res.getUser().setPassword("");
+        } catch(EmptyResultDataAccessException e) {
             res.setStatus(Status.ERROR);
         }
-        res.setUser(user);
         return res;
     }
 
@@ -139,51 +162,149 @@ public class GeneralController {
         .setStatus(Status.SUCCESS);
         UUID uuid = UUID.randomUUID();
         String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        UserDTO user = Optional.of(jdbcTemplate.queryForObject("SELECT * FROM users WHERE username = ?", new UserRowMapper(), username)).orElse(null);
-        if(user != null) {
-            this.jdbcTemplate.update("INSERT INTO posts (id, base64, caption, posterId, latitude, longitude, date, mood) VALUES (?,?,?,?,?,?,?,?)", 
-                uuid,
-                postDTO.getBase64(),
-                postDTO.getCaption(),
-                username,
-                postDTO.getLatitude(),
-                postDTO.getLongitude(),
-                new Date(System.currentTimeMillis()),
-                postDTO.getMood());
-            this.jdbcTemplate.update("UPDATE users SET score = ? WHERE username = ?", 
-                user.getScore() + 2,
-                username);
-            res.setPost(postDTO);
-        } else {
+        try {
+            UserDTO user = Optional.of(jdbcTemplate.queryForObject("SELECT * FROM users WHERE username = ?", new UserRowMapper(), username)).orElse(null);
+            if(user != null) {
+                this.jdbcTemplate.update("INSERT INTO posts (id, base64, title, caption, posterId, latitude, longitude, date, mood, upvotes, downvotes, posterUsername) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", 
+                    uuid,
+                    postDTO.getBase64(),
+                    postDTO.getTitle(),
+                    postDTO.getCaption(),
+                    user.getId(),
+                    postDTO.getLatitude(),
+                    postDTO.getLongitude(),
+                    new Date(System.currentTimeMillis()),
+                    postDTO.getMood(),
+                    0,
+                    0,                    
+                    user.getUsername());
+                this.jdbcTemplate.update("UPDATE users SET score = ? WHERE username = ?", 
+                    user.getScore() + 2,
+                    username);
+                res.setPost(postDTO);
+            } else {
+                res.setStatus(Status.ERROR);
+            }
+        } catch(EmptyResultDataAccessException e) {
             res.setStatus(Status.ERROR);
         }
+        
         return res;
     }
 
     @PostMapping("/searchPost")
     public List<PostDTO> search(@RequestBody PostDTO postDTO) {
-        List<PostDTO> posts = Optional.of(jdbcTemplate.query("SELECT * FROM posts WHERE caption LIKE ?", new PostRowMapper(), "%" + postDTO.getCaption() + "%")).orElse(null);
-        return posts;
+        try {
+            List<PostDTO> posts = Optional.of(jdbcTemplate.query("SELECT * FROM posts WHERE caption LIKE ? OR title LIKE ?", new PostRowMapper(), "%" + postDTO.getCaption() + "%", "%" + postDTO.getCaption() + "%")).orElse(null);
+            return posts;
+        } catch(EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
-    @PostMapping("/scores")
+    @GetMapping("/scores")
     public List<UserDTO> getScores() {
         List<UserDTO> users = Optional.of(jdbcTemplate.query("SELECT * FROM users ORDER BY score DESC", new UserRowMapper())).orElse(null);
+        for(UserDTO user : users) {
+            user.setPassword("");
+        }
         return users;
     }
 
     @PostMapping("/getPostsOfUser")
     public List<PostDTO> getPostsByUsername(@RequestBody AuthInputModel authInputModel) {
-        UserDTO user = Optional.of(jdbcTemplate.queryForObject("SELECT * FROM users WHERE username = ?", new UserRowMapper(), authInputModel.getUser().getUsername())).orElse(null);
-        if(user != null) {
-            List<PostDTO> posts = Optional.of(jdbcTemplate.query("SELECT * FROM posts WHERE posterId = ?", new PostRowMapper(), user.getId())).orElse(null);
-            return posts;
+        try {
+            UserDTO user = Optional.of(jdbcTemplate.queryForObject("SELECT * FROM users WHERE username = ?", new UserRowMapper(), authInputModel.getUser().getUsername())).orElse(null);
+            if(user != null) {
+                List<PostDTO> posts = Optional.of(jdbcTemplate.query("SELECT * FROM posts WHERE posterId = ?", new PostRowMapper(), user.getId())).orElse(null);
+                return posts;
+            }
+        } catch(EmptyResultDataAccessException e) {
+            return null;
         }
         return null;
     }
+    
+    @PostMapping("/vote")
+    public VoteDTO vote(@RequestBody VoteDTO vote) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        UserDTO user = null;
+        try {
+            user = Optional.of(jdbcTemplate.queryForObject("SELECT * FROM users WHERE username = ?", new UserRowMapper(), username)).orElse(null);
+            VoteDTO alreadyVoted = Optional.of(this.jdbcTemplate.queryForObject("SELECT * FROM votes WHERE userid = ? AND postid = ?", new VoteRowMapper(), user.getId(), vote.getPostId())).orElse(null);
+            if(alreadyVoted == null) {
+                PostDTO post = Optional.of(this.jdbcTemplate.queryForObject("SELECT * FROM posts WHERE id = ?", new PostRowMapper(), vote.getPostId())).orElse(null);
+                UserDTO poster = Optional.of(jdbcTemplate.queryForObject("SELECT * FROM users WHERE id = ?", new UserRowMapper(), post.getPosterId())).orElse(null);
+                if(user != null && post != null && poster != null && (vote.getVote() == -1 || vote.getVote() == 1)) {
+                    UUID uuid = UUID.randomUUID();
+                    this.jdbcTemplate.update("INSERT INTO votes (id, userid, postid, vote) VALUES (?,?,?,?)", 
+                        uuid.toString(),
+                        user.getId(),
+                        vote.getPostId(),
+                        vote.getVote());
+                    this.jdbcTemplate.update("UPDATE users SET score = ? WHERE id = ?", 
+                        poster.getScore() + vote.getVote(),
+                        poster.getId());
+                    
+                    if(vote.getVote() == 1){
+                        this.jdbcTemplate.update("UPDATE posts SET upvotes = ? WHERE id = ?", 
+                            post.getUpvotes() + 1,
+                            post.getId());
+                    } else if(vote.getVote() == -1) {
+                        this.jdbcTemplate.update("UPDATE posts SET downvotes = ? WHERE id = ?", 
+                            post.getDownvotes() + 1,
+                            post.getId());
+                    }
+                }
+                vote.setId("SUCCESS");
+            } else {
+                vote.setId("ERROR");
+            }
+        } catch(EmptyResultDataAccessException e) {
+            PostDTO post = Optional.of(this.jdbcTemplate.queryForObject("SELECT * FROM posts WHERE id = ?", new PostRowMapper(), vote.getPostId())).orElse(null);
+            UserDTO poster = Optional.of(jdbcTemplate.queryForObject("SELECT * FROM users WHERE id = ?", new UserRowMapper(), post.getPosterId())).orElse(null);
+            if(user != null && post != null && poster != null && (vote.getVote() == -1 || vote.getVote() == 1)) {
+                UUID uuid = UUID.randomUUID();
+                this.jdbcTemplate.update("INSERT INTO votes (id, userid, postid, vote) VALUES (?,?,?,?)", 
+                    uuid.toString(),
+                    user.getId(),
+                    vote.getPostId(),
+                    vote.getVote());
+                this.jdbcTemplate.update("UPDATE users SET score = ? WHERE id = ?", 
+                    poster.getScore() + vote.getVote(),
+                    poster.getId());
 
-    // @PostMapping("/vote")
-    // public VoteDTO vote(@RequestBody VoteDTO vote) {
+                if(vote.getVote() == 1){
+                    this.jdbcTemplate.update("UPDATE posts SET upvotes = ? WHERE id = ?", 
+                        post.getUpvotes() + 1,
+                        post.getId());
+                } else if(vote.getVote() == -1) {
+                    this.jdbcTemplate.update("UPDATE posts SET downvotes = ? WHERE id = ?", 
+                        post.getDownvotes() + 1,
+                        post.getId());
+                }
+            }
+            vote.setId("SUCCESS");
+        }
+        return vote;
+    }
 
-    // }
+    @PostMapping("/checkVoted")
+    public VoteDTO checkVoted(@RequestBody VoteDTO vote) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        UserDTO user = Optional.of(jdbcTemplate.queryForObject("SELECT * FROM users WHERE username = ?", new UserRowMapper(), username)).orElse(null);
+        try {
+            VoteDTO voteCheck = Optional.of(jdbcTemplate.queryForObject("SELECT * FROM votes WHERE userid = ? AND postid = ?", new VoteRowMapper(), user.getId(), vote.getPostId())).orElse(null);
+            
+            if(voteCheck != null) {
+                vote.setId("SUCCESS");
+            } else {
+                vote.setId("ERROR");
+            }
+        } catch(EmptyResultDataAccessException e) {
+            
+            vote.setId("ERROR");
+        }
+        return vote;
+    }
 }
