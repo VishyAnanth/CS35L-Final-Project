@@ -99,6 +99,7 @@
     justify-content: center;
     cursor: pointer;
     display: none;
+    z-index: 1000;
 }
 
 .displayResults {
