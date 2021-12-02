@@ -1,0 +1,59 @@
+.signUpContainer2 {
+    position: absolute;
+    left: 30%;
+    width: 40%;
+    top: 5%;
+    height: 90%;
+    display: flex;
+    background-color: lightgray;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    border-radius: 20px;
+}
+
+.signUpButton2 {
+    border: solid 1px rgb(40, 139, 231);
+    margin-top: 5%;
+    height: 7%;
+    width: 70%;
+    border-radius: 10px;
+    padding-left: 2%;
+    outline: none;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(40, 139, 231);
+    color: white;
+    transition: 0.4s;
+    cursor: pointer;
+}
+
+.logoSignUp2 {
+    font-family: 'instaFont';
+    color: black;
+    font-size: 3vw;
+    margin-top: 5%;
+}
+
+.inputFields2 {
+    border: solid 1px transparent;
+    margin-top: 5%;
+    height: 7%;
+    width: 70%;
+    border-radius: 10px;
+    padding-left: 2%;
+    outline: none;
+    font-size: 15px;
+}
+
+.signUpButton2:hover {
+    opacity: 0.6;
+}
+
+.loginButton2 {
+    color: white;
+    border: solid 1px darkgray;
+    background-color: darkgray;
+}
